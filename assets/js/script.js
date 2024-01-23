@@ -31,24 +31,37 @@
 // define variables
 var searchBtnEl=document.querySelector("#search-button");
 var weatherData;
+var apiKey = "c69b59d2c54d81b754f2d4320cd54364";
 
 function buildHeader(){
     // Build header
     var todayEl = $("#today");
+    todayEl.empty();
     todayEl.append($("<h2>").text("London ("+dayjs().format("DD/MM/YYYY")+")"));
 
     // add weather image
     var headerEl = $("<p>");
 
     // add Temp, Wind and Humidty
-    headerEl.append($("<div>").text("Temp: "));
-    headerEl.append($("<div>").text("Wind: "));
-    headerEl.append($("<div>").text("Humidity: "));
-
+    // list[0] is now
+    headerEl.append($("<img>").attr("src", "https://openweathermap.org/img/wn/"+ weatherData.list[0].weather[0].icon+"@2x.png"));
+    headerEl.append($("<div>").text("Temp: "+weatherData.list[0].main.temp));
+    headerEl.append($("<div>").text("Wind: "+weatherData.list[0].wind.speed));
+    headerEl.append($("<div>").text("Humidity: "+weatherData.list[0].main.humidity+"%"));
+    console.log(headerEl);
     todayEl.append(headerEl);
 }
 function buildForecast(){
-    console.log("build 5 day forecast");
+    // list[1 to 5] are the next 5 days
+    console.log("build 5 day forecast", weatherData);
+    console.log(dayjs.unix(1706054400));
+    var forecast=weatherData.list;
+    for (let i = 1; i <= 5; i++){
+        console.log(forecast[i].dt);
+        console.log(dayjs.unix(forecast[i].dt));
+        //console.log(dayjs.unix(forecast[i].dt));
+    }
+    
 };
 
 // "Search" for entered location on API and return weather
@@ -57,17 +70,24 @@ searchBtnEl.addEventListener("click", searchWeather);
 // function called from search button
 async function searchWeather(event){
     event.preventDefault();
-    console.log("Search Weather");
-    var apiKey = "c69b59d2c54d81b754f2d4320cd54364";
-    // var apiKey = "0017380807320210d8dbd3e12b380410";
+
     var cityLat = "44.34";
     var cityLon = "10.99";
     var city = "London,uk";
-    var apiCall = "http://api.openweathermap.org/data/2.5/forecast?lat="+cityLat+"&lon="+cityLon+"&appid="+apiKey;
-    apiCall="http://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+apiKey;
-    console.log(apiCall);
-    var weatherResponse = await fetch(apiCall);
+    var weatherResponse;
+
+    // current forecast for location
+    // apiCall="http://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+apiKey;
+    // console.log(apiCall);
+    // weatherResponse = await fetch(apiCall);
+    // weatherData = await weatherResponse.json();
+    // buildHeader();
+
+    // 5 day forecast for location
+    apiCall="http://api.openweathermap.org/data/2.5/forecast?q="+city+"&appid="+apiKey+"&units=metric";
+    weatherResponse = await fetch(apiCall);
     weatherData = await weatherResponse.json();
+    console.log(apiCall);
     buildHeader();
     buildForecast();
 };
