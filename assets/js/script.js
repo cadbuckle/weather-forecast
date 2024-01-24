@@ -32,37 +32,102 @@
 var searchBtnEl=document.querySelector("#search-button");
 var weatherData;
 var apiKey = "c69b59d2c54d81b754f2d4320cd54364";
+var currentDate;
 
 function buildHeader(){
     // Build header
     var todayEl = $("#today");
     todayEl.empty();
+    todayEl.attr("class", "row mt-3 card")
     todayEl.append($("<h2>").text("London ("+dayjs().format("DD/MM/YYYY")+")"));
 
     // add weather image
     var headerEl = $("<p>");
 
     // add Temp, Wind and Humidty
-    // list[0] is now
+    // list[0] is now!
     headerEl.append($("<img>").attr("src", "https://openweathermap.org/img/wn/"+ weatherData.list[0].weather[0].icon+"@2x.png"));
     headerEl.append($("<div>").text("Temp: "+weatherData.list[0].main.temp));
     headerEl.append($("<div>").text("Wind: "+weatherData.list[0].wind.speed));
     headerEl.append($("<div>").text("Humidity: "+weatherData.list[0].main.humidity+"%"));
-    console.log(headerEl);
     todayEl.append(headerEl);
+    currentDate = dayjs.unix(weatherData.list[0].dt).format("DD/MM/YYYY")
 }
 function buildForecast(){
-    // list[1 to 5] are the next 5 days
+
     console.log("build 5 day forecast", weatherData);
-    console.log(dayjs.unix(1706054400));
-    var forecast=weatherData.list;
-    for (let i = 1; i <= 5; i++){
-        console.log(forecast[i].dt);
-        console.log(dayjs.unix(forecast[i].dt));
-        //console.log(dayjs.unix(forecast[i].dt));
-    }
+
+    var forecastData=weatherData.list;
     
+    var forecastEl = $("#forecast");
+    forecastEl.empty();
+    forecastEl.append($("<h3>").text("5-Day Forecast:"));
+
+    // count for number of days
+    var day=0;
+
+    // iterate through data and build new card on change of date
+    for (let i = 1; i <= 70; i++){
+
+        if (currentDate != dayjs.unix(forecastData[i].dt).format("DD/MM/YYYY")){
+            day++;
+            currentDate = dayjs.unix(forecastData[i].dt).format("DD/MM/YYYY");
+            var nc = newForecastCard(
+                currentDate,
+                forecastData[i].main.temp,
+                forecastData[i].wind.speed,
+                forecastData[i].main.humidity,
+                forecastData[i].weather[0].icon
+                );
+            forecastEl.append(nc);
+            if (day > 5){
+                break;
+            }
+        }
+    }
 };
+
+function newForecastCard(cardDate, cardTemp, cardWind, cardHumdity, cardIcon){
+
+    // define card
+    const newCard = document.createElement('div');
+    newCard.classList.add('col-2');
+    newCard.classList.add('card');
+
+    // define card body
+    const newCardBody = document.createElement('div');
+    newCardBody.classList.add('card-body');
+
+
+    // define card title
+    const newCardTitle = document.createElement('h5');
+    newCardTitle.classList.add('card-title');
+    newCardTitle.textContent = cardDate;
+    newCardBody.appendChild(newCardTitle);
+
+    // define weather image
+    const newCardImg = document.createElement('img');
+    newCardImg.src = "https://openweathermap.org/img/wn/"+cardIcon+"@2x.png";
+    newCardBody.appendChild(newCardImg);
+
+    // define card temp
+    const newCardTemp = document.createElement('ul');
+    newCardTemp.textContent = "Temp: "+cardTemp;
+    newCardBody.appendChild(newCardTemp);
+
+    // define card wind
+    const newCardWind = document.createElement('ul');
+    newCardWind.textContent = "Wind: "+cardWind;
+    newCardBody.appendChild(newCardWind);
+
+    // define card humidity
+    const newCardHumid = document.createElement('ul');
+    newCardHumid.textContent = "Humidity: "+cardHumdity;
+    newCardBody.appendChild(newCardHumid);
+    newCard.appendChild(newCardBody);
+
+    return newCard;
+}
 
 // "Search" for entered location on API and return weather
 searchBtnEl.addEventListener("click", searchWeather);
@@ -70,24 +135,27 @@ searchBtnEl.addEventListener("click", searchWeather);
 // function called from search button
 async function searchWeather(event){
     event.preventDefault();
-
-    var cityLat = "44.34";
-    var cityLon = "10.99";
+    var cityLat = "51.5072";
+    var cityLon = "0.1276";
     var city = "London,uk";
     var weatherResponse;
-
-    // current forecast for location
-    // apiCall="http://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+apiKey;
-    // console.log(apiCall);
-    // weatherResponse = await fetch(apiCall);
-    // weatherData = await weatherResponse.json();
-    // buildHeader();
 
     // 5 day forecast for location
     apiCall="http://api.openweathermap.org/data/2.5/forecast?q="+city+"&appid="+apiKey+"&units=metric";
     weatherResponse = await fetch(apiCall);
     weatherData = await weatherResponse.json();
     console.log(apiCall);
+
+    // fetch(apiCall)
+    //     .then(function (response) {
+    //   weatherResponse = response.json();
+    //   console.log(weatherResponse);
+    //   return weatherResponse;
+    // })
+    // .then(function (weatherData) {
+    //   return weatherData.list;
+    // });
+
     buildHeader();
     buildForecast();
 };
