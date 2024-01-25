@@ -22,6 +22,8 @@ var searchTextEl = document.querySelector("#search-input");
 // define variables
 var weatherData;
 var currentDate;
+var cityEntered;
+var apicall;
 var historyArray = [];
 var lcHistoryArray = [];
 
@@ -31,23 +33,26 @@ function buildHeader() {
   var todayEl = $("#today");
   todayEl.empty();
   todayEl.attr("class", "row mt-3 bigcard card");
-  todayEl.append(
-    $("<h2>").text(cityEntered + " (" + dayjs().format("DD/MM/YYYY") + ")")
-  );
+
+  var cityDateIcon =
+    "<h2>" +
+    cityEntered +
+    " (" +
+    dayjs().format("DD/MM/YYYY") +
+    ") " +
+    "<img src='https://openweathermap.org/img/wn/" +
+    weatherData.list[0].weather[0].icon +
+    iconExt +
+    "'</img>" +
+    "</h2>";
+  todayEl.append(cityDateIcon);
+
 
   // add weather image
   var headerEl = $("<p>");
 
   // add Temp, Wind and Humidty
   // list[0] is now!
-  headerEl.append(
-    $("<img>").attr(
-      "src",
-      "https://openweathermap.org/img/wn/" +
-        weatherData.list[0].weather[0].icon +
-        iconExt
-    )
-  );
   headerEl.append($("<div>").text("Temp: " + weatherData.list[0].main.temp));
   headerEl.append($("<div>").text("Wind: " + weatherData.list[0].wind.speed));
   headerEl.append(
@@ -96,7 +101,6 @@ function newForecastCard(cardDate, cardTemp, cardWind, cardHumdity, cardIcon) {
   const newCardBody = document.createElement("div");
   newCardBody.classList.add("col-2");
   newCardBody.classList.add("card");
-  // newCardBody.classList.add('card-body');
 
   // define card title
   const newCardTitle = document.createElement("h5");
@@ -121,15 +125,11 @@ function newForecastCard(cardDate, cardTemp, cardWind, cardHumdity, cardIcon) {
 
   // define card humidity
   const newCardHumid = document.createElement("ul");
-  newCardHumid.textContent = "Humidity: " + cardHumdity;
+  newCardHumid.textContent = "Humidity: " + cardHumdity+"%";
   newCardBody.appendChild(newCardHumid);
   newCard.appendChild(newCardBody);
   return newCardBody;
-  // return newCard;
 }
-
-// "Search" for entered location on API and return weather
-searchBtnEl.addEventListener("click", searchWeather);
 
 async function searchWeather(event) {
   event.preventDefault();
@@ -137,20 +137,14 @@ async function searchWeather(event) {
   // get entered city
   var cityLat = "51.5072";
   var cityLon = "0.1276";
-  var cityEntered = searchTextEl.value;
+  cityEntered = searchTextEl.value.trim();
 
   if (!cityEntered) {
     alert("Please enter a location for the forecast");
   } else {
     var weatherResponse;
 
-    // 5 day forecast for location
-    apiCall =
-      "http://api.openweathermap.org/data/2.5/forecast?q=" +
-      cityEntered +
-      "&appid=" +
-      apiKey +
-      "&units=metric";
+    buildAPI();
     weatherResponse = await fetch(apiCall);
     weatherData = await weatherResponse.json();
 
@@ -158,6 +152,15 @@ async function searchWeather(event) {
     buildForecast();
     saveToHistory();
   }
+}
+
+function buildAPI() {
+  apiCall =
+    "http://api.openweathermap.org/data/2.5/forecast?q=" +
+    cityEntered +
+    "&appid=" +
+    apiKey +
+    "&units=metric";
 }
 
 function saveToHistory() {
@@ -203,7 +206,26 @@ function loadFromHistory() {
       lcHistoryArray.push(historyArray[i].toLowerCase());
     }
     displayHistory();
-  } else {historyArray = [];}
+  } else {
+    historyArray = [];
+  }
+}
+
+// "Search" for entered location on API and return weather
+searchBtnEl.addEventListener("click", searchWeather);
+
+// add click listener for all saved locations
+$(document).on("click", ".history-button", displayHistoryItem);
+
+// function to display the weather for an item from the history list
+async function displayHistoryItem() {
+  cityEntered = $(this).attr("data-name");
+  buildAPI();
+  weatherResponse = await fetch(apiCall);
+  weatherData = await weatherResponse.json();
+
+  buildHeader();
+  buildForecast();
 }
 
 loadFromHistory();
