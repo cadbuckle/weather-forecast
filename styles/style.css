@@ -1,3 +1,43 @@
 .card{
     margin-right: 5px;
+    background-color: darkslategray;
+    color: white;
+}
+
+.bigcard{
+    background-color: white;
+    color: black;
+
+}
+
+.card img{
+    height: 50px;
+    width: 50px;
+}
+
+.border-curve {
+    border-radius: 6px !important;
+}
+
+.search-button {
+    background-color: aqua;
+    color: white;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.history-button {
+    background-color:lightgray;
+    color: black;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+header {
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 100%);
+}
+
+input {
+    width: 100%;
 }
