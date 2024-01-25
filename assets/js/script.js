@@ -161,7 +161,6 @@ async function searchWeather(event) {
 }
 
 function saveToHistory() {
-  console.log("Save");
   var lcCity = cityEntered.toLowerCase();
   // if city not in array then add to array and redisplay the history
   if (!lcHistoryArray.includes(lcCity)) {
@@ -196,15 +195,15 @@ function displayHistory() {
 function loadFromHistory() {
   // get History from local storage
   historyArray = JSON.parse(localStorage.getItem("wk08-weather-history"));
+  lcHistoryArray = [];
   // only process is history array not empty
   if (historyArray !== null) {
     // create lowercase version of HistoryArray
-    lcHistoryArray = [];
     for (let i = 0; i < historyArray.length; i++) {
       lcHistoryArray.push(historyArray[i].toLowerCase());
     }
     displayHistory();
-}
+  } else {historyArray = [];}
 }
 
 loadFromHistory();
