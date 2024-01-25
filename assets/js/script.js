@@ -22,19 +22,17 @@ var searchTextEl = document.querySelector("#search-input");
 // define variables
 var weatherData;
 var currentDate;
-var historyArray = ["London", "New York", "Paris", "Munich"];
-var lcHistoryArray = ["london", "new york", "paris", "munich"];
+var historyArray = [];
+var lcHistoryArray = [];
 
 function buildHeader() {
   // Build header
-  cityEntered = weatherData.city.name
+  cityEntered = weatherData.city.name;
   var todayEl = $("#today");
   todayEl.empty();
   todayEl.attr("class", "row mt-3 bigcard card");
   todayEl.append(
-    $("<h2>").text(
-      cityEntered + " (" + dayjs().format("DD/MM/YYYY") + ")"
-    )
+    $("<h2>").text(cityEntered + " (" + dayjs().format("DD/MM/YYYY") + ")")
   );
 
   // add weather image
@@ -158,7 +156,6 @@ async function searchWeather(event) {
 
     buildHeader();
     buildForecast();
-
     saveToHistory();
   }
 }
@@ -170,34 +167,44 @@ function saveToHistory() {
   if (!lcHistoryArray.includes(lcCity)) {
     lcHistoryArray.push(lcCity);
     historyArray.push(cityEntered);
+    // save list to local storage
+    localStorage.setItem("wk08-weather-history", JSON.stringify(historyArray));
+    // redraw history list
     displayHistory();
-  };
+  }
 }
 
 function displayHistory() {
-  console.log("Draw History");
-  
+  // empty on-screen list
+  // iterate through history array and build item for display
   $("#history").empty();
   for (let i = 0; i < historyArray.length; i++) {
     const arrayItem = historyArray[i];
     // define button
     var a = $("<button>");
     // assign data-name as the location
-    a.attr("data-name",historyArray[i]);
+    a.attr("data-name", historyArray[i]);
     // assign style to button
     a.addClass("btn history-button border-curve");
     // add button text
-    a.text(historyArray[i])
+    a.text(historyArray[i]);
     // add button to list
     $("#history").append(a);
   }
-
 }
 
 function loadFromHistory() {
-  console.log("Load");
-
-  displayHistory();
+  // get History from local storage
+  historyArray = JSON.parse(localStorage.getItem("wk08-weather-history"));
+  // only process is history array not empty
+  if (historyArray !== null) {
+    // create lowercase version of HistoryArray
+    lcHistoryArray = [];
+    for (let i = 0; i < historyArray.length; i++) {
+      lcHistoryArray.push(historyArray[i].toLowerCase());
+    }
+    displayHistory();
+}
 }
 
 loadFromHistory();
