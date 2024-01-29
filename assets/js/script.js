@@ -193,6 +193,7 @@ function displayHistory() {
 }
 
 function loadFromHistory() {
+  console.log(("loadFromHistory"));
   // get History from local storage
   historyArray = JSON.parse(localStorage.getItem("wk08-weather-history"));
   lcHistoryArray = [];
