@@ -1,15 +1,3 @@
-// Create a weather dashboard with form inputs.
-// 1 When page is opened
-//      Have Input box for city/town/location
-//      Search button to find weather for entered location
-//      "History" (beneath search button) is populated with saved list of searched cities
-//      List is clickable per "5" below
-// 2 When a user searches for a city they are
-//      city is added to the search history (localstorage)
-// 5 When a user click on a city in the search history they are
-//      presented with current conditions for that city
-//      presented with future conditions for that city
-
 // define constants
 const apiKey = "c69b59d2c54d81b754f2d4320cd54364";
 const iconExt = ".png"; // 1x icon size
@@ -36,15 +24,16 @@ function buildHeader() {
   todayEl.empty();
   todayEl.attr("class", "row mt-3 bigcard card");
 
-  // div, p (styled as h2), img
+  // div, p, img to display the Current Weather
   var divEl = $("<div>");
   divEl.addClass("currentWeather");
   var pEl = $("<p>");
-  pEl = cityEntered+    " (" +  dayjs().format("DD/MM/YYYY") + ") ";
+  pEl = cityEntered + " (" + dayjs().format("DD/MM/YYYY") + ") ";
   var imgEl = $("<img>");
-  imgEl.attr("src",'https://openweathermap.org/img/wn/'+
-  weatherNow.weather[0].icon +
-  iconExt);
+  imgEl.attr(
+    "src",
+    "https://openweathermap.org/img/wn/" + weatherNow.weather[0].icon + iconExt
+  );
 
   divEl.append(pEl);
   divEl.append(imgEl);
@@ -55,8 +44,8 @@ function buildHeader() {
 
   // add Temp, Wind and Humidty
   // list[0] is now!
-  headerEl.append($("<div>").text("Temp: " + weatherNow.main.temp+degree));
-  headerEl.append($("<div>").text("Wind: " + weatherNow.wind.speed+"m/s"));
+  headerEl.append($("<div>").text("Temp: " + weatherNow.main.temp + degree));
+  headerEl.append($("<div>").text("Wind: " + weatherNow.wind.speed + "m/s"));
   headerEl.append(
     $("<div>").text("Humidity: " + weatherNow.main.humidity + "%")
   );
@@ -117,17 +106,17 @@ function newForecastCard(cardDate, cardTemp, cardWind, cardHumdity, cardIcon) {
 
   // define card temp
   const newCardTemp = document.createElement("p");
-  newCardTemp.textContent = "Temp: " + cardTemp+degree;
+  newCardTemp.textContent = "Temp: " + cardTemp + degree;
   newCardBody.appendChild(newCardTemp);
 
   // define card wind
   const newCardWind = document.createElement("p");
-  newCardWind.textContent = "Wind: " + cardWind+"m/s";
+  newCardWind.textContent = "Wind: " + cardWind + "m/s";
   newCardBody.appendChild(newCardWind);
 
   // define card humidity
   const newCardHumid = document.createElement("p");
-  newCardHumid.textContent = "Humidity: " + cardHumdity+"%";
+  newCardHumid.textContent = "Humidity: " + cardHumdity + "%";
   newCardBody.appendChild(newCardHumid);
   newCard.appendChild(newCardBody);
   return newCardBody;
@@ -157,7 +146,7 @@ async function searchWeather(event) {
 
 function buildAPI() {
   apiCall =
-    "http://api.openweathermap.org/data/2.5/forecast?q=" +
+    "https://api.openweathermap.org/data/2.5/forecast?q=" +
     cityEntered +
     "&appid=" +
     apiKey +
@@ -174,8 +163,7 @@ function saveToHistory() {
     lcHistArr5.push(lcCity);
     var histArr5 = [];
     histArr5.push(cityEntered);
-    var lcHArr = lcHistArr5.concat(lcHistoryArray.slice(0,5));
-    var hArr = histArr5.concat(historyArray.slice(0,5));
+    var hArr = histArr5.concat(historyArray.slice(0, 5));
     historyArray = hArr;
     // save list to local storage
     localStorage.setItem("wk08-weather-history", JSON.stringify(hArr));
