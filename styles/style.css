@@ -1,6 +1,6 @@
 .card {
   margin-right: 5px;
-  background-color: darkslategray;
+  background-color: #2d3e50;
   color: white;
 }
 
@@ -19,7 +19,7 @@
 }
 
 .search-button {
-  background-color: aqua;
+  background-color: #5098e6;
   color: white;
   width: 100%;
   margin-top: 10px;
@@ -27,12 +27,12 @@
 .search-button:hover {
     background-color: white;
     color: black;
-    border: 2px solid aqua;
+    border: 2px solid #5098e6;
   
 }
 
 .history-button {
-  background-color: lightgray;
+  background-color: #aeaeae;
   color: black;
   width: 100%;
   margin-bottom: 10px;
@@ -41,7 +41,7 @@
 .history-button:hover {
   background-color: white;
   color: black;
-  border: 2px solid rgb(211, 211, 211);
+  border: 2px solid #aeaeae;
 }
 
 header {
@@ -49,10 +49,14 @@ header {
   background: linear-gradient(
     90deg,
     rgba(2, 0, 36, 1) 0%,
-    rgba(9, 9, 121, 1) 100%
+    rgb(59, 59, 178) 100%
   );
 }
 
+.currentWeather {
+  font-size: 32px;
+  font-weight: bold;
+}
 input {
   width: 100%;
 }
