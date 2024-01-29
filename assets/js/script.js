@@ -136,11 +136,15 @@ async function searchWeather(event) {
 
     buildAPI();
     weatherResponse = await fetch(apiCall);
-    weatherData = await weatherResponse.json();
+    if (weatherResponse.status != 200) {
+      alert("Location '"+cityEntered+"' cannot be found!");
+    } else {
+      weatherData = await weatherResponse.json();
 
-    buildHeader();
-    buildForecast();
-    saveToHistory();
+      buildHeader();
+      buildForecast();
+      saveToHistory();
+    }
   }
 }
 
@@ -193,7 +197,6 @@ function displayHistory() {
 }
 
 function loadFromHistory() {
-  console.log(("loadFromHistory"));
   // get History from local storage
   historyArray = JSON.parse(localStorage.getItem("wk08-weather-history"));
   lcHistoryArray = [];
