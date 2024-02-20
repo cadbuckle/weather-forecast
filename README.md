@@ -1,4 +1,4 @@
-# Work Day Schedule
+# Weather Forecaster
 
 ## Description
 This app allows a user to view the current (and future) weather for an entered location.
